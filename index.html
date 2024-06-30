@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+    <main>
+    <h1>Boleta</h1>
+    <div class="decora">
+        <p>N°:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input type="number"></p>
+        <div class="flex">
+            <p>Nombre: <input type="text" name="nombre"></p>
+            <p>Fecha : <input type="date" name="fecha"></p>
+        </div>
+        <p>Correo :&nbsp;&nbsp;<input type="text" name="Ddrección"></p>
+        
+    </div>
+
+    <br>
+
+    <div>
+        <button onclick="mostrarTabla()">Agregar compras</button>
+    </div>
+
+    <div id="tablaContainer" style="display: none;">
+        <table id="tablaProductos" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Nuevo producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td contenteditable="true"></td>
+                    <td contenteditable="true" oninput="calcularSubtotal(this)"></td>
+                    <td contenteditable="true" oninput="calcularSubtotal(this)"></td>
+                    <td contenteditable="true"></td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3">Total</td>
+                    <td id="total" contenteditable="false">0.00</td>
+                </tr>
+            </tfoot>
+        </table>
+        <button onclick="agregarFila()">Nuevo producto</button>
+    </div>
+    </main>
+
+    <script>
+        function mostrarTabla() {
+            var tablaContainer = document.getElementById("tablaContainer");
+            var tablaProductos = document.getElementById("tablaProductos");
+
+            tablaContainer.style.display = "block"; 
+            tablaProductos.style.display = "table"; 
+        }
+
+        function calcularSubtotal(celda) {
+            var fila = celda.parentNode;
+            var cantidad = parseFloat(fila.cells[1].innerText.trim()); 
+            var precio = parseFloat(fila.cells[2].innerText.trim()); 
+            var subtotal = 0.0;
+
+            
+            if (!isNaN(cantidad) && !isNaN(precio)) {
+                subtotal = cantidad * precio; 
+                fila.cells[3].innerText = subtotal.toFixed(2); 
+            } else {
+                fila.cells[3].innerText = ''; 
+            }
+
+            actualizarTotal();
+        }
+
+        function agregarFila() {
+            var tbody = document.querySelector("#tablaProductos tbody");
+            var newRow = document.createElement("tr");
+            newRow.innerHTML = `
+                <td contenteditable="true"></td>
+                <td contenteditable="true" oninput="calcularSubtotal(this)"></td>
+                <td contenteditable="true" oninput="calcularSubtotal(this)"></td>
+                <td contenteditable="true"></td>
+            `;
+            tbody.appendChild(newRow);
+        }
+
+        function actualizarTotal() {
+            var total = 0.0;
+            var subtotales = document.querySelectorAll("#tablaProductos tbody tr");
+
+            subtotales.forEach(function(fila) {
+                var subtotal = parseFloat(fila.cells[3].innerText.trim());
+                if (!isNaN(subtotal)) {
+                    total += subtotal;
+                }
+            });
+
+            document.getElementById("total").innerText = total.toFixed(2);
+        }
+    </script>
+</body>
+</html>
